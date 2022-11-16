@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <title></title>
+        <meta name="description" content="" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css"
+        />
+        <script>
+            const vscode = acquireVsCodeApi();
+
+            window.addEventListener("message", (event) => {
+                const message = event.data; // The json data that the extension sent
+                switch (message.type) {
+                    case "initial": {
+                        initialLayout(message.value);
+                        break;
+                    }
+                    case "categorySelect": {
+                        document.getElementById("sidebar-preview").src =
+                            "https://staging.docs.setu.co/sidebar-preview?endpoints=" +
+                            message.value;
+                        break;
+                    }
+                }
+            });
+
+            function initialLayout(options) {
+                let selectOptionHTML = getOptions(options);
+                document.getElementById("category").innerHTML =
+                    selectOptionHTML;
+            }
+
+            function getScore() {
+                var score = document.querySelector(
+                    'input[name="categorySelect"]:checked'
+                ).value;
+
+                vscode.postMessage({ type: "colorSelected", value: color });
+            }
+
+            function getOptions(options) {
+                let optionsHTML =
+                    "<option disabled selected>Select Category</option>";
+                for (let index in options) {
+                    let option = options[index];
+                    optionsHTML += `<option value=${option.value}>${option.name}</option>`;
+                }
+                return optionsHTML;
+            }
+
+            function getCategory() {
+                let category = document.getElementById("category").value;
+                console.log(category);
+                // document.getElementById("getValue").innerText = category;
+                vscode.postMessage({ type: "categorySelect", value: category });
+            }
+        </script>
+    </head>
+
+    <body style="margin: 0px; padding: 0px">
+        <div style="text-align: center; padding: 20px">
+            <h3 style="margin-bottom: 10px">Sidebar Preview</h3>
+            <h6 id="test-path"></h6>
+            <h3 id="getValue"></h3>
+            <div class="form-group">
+                <label for="category">Select category</label>
+                <select
+                    class="form-control"
+                    id="category"
+                    onchange="getCategory();"
+                ></select>
+            </div>
+            <iframe
+                src=""
+                frameborder="0"
+                style="
+                    height: 100vh;
+                    width: 100%;
+                    top: 0px;
+                    left: 0px;
+                    right: 0px;
+                    bottom: 0px;
+                    border: 1px solid black;
+                "
+                height="100%"
+                width="100%"
+                id="sidebar-preview"
+            ></iframe>
+        </div>
+    </body>
+</html>
