@@ -5,3 +5,4 @@ build
 *.vsix
 *.log
 archive
+package-lock.json
