@@ -51,8 +51,10 @@ const docterMDXPreview = async () => {
     preview_panel.webview.html = client_html;
     let encodedMDX = base64url(active_doc.getText());
     preview_panel.webview.postMessage({
-        document: encodedMDX,
+        value: encodedMDX,
+        type: "MDX_PREVIEW",
     });
+    return;
 };
 
 // Sidebar Preview
@@ -94,12 +96,17 @@ const docterSidebarPreview = async () => {
     sidebar_preview_panel.webview.html = sidebar_html;
     sidebar_preview_panel.webview.postMessage({
         value: options,
-        type: "initial",
+        type: "SIDEBAR_PREVIEW",
     });
 
     sidebar_preview_panel.webview.onDidReceiveMessage(async (data) => {
         switch (data.type) {
-            case "categorySelect": {
+            case "CATEGORY_SELECTED": {
+                isVirtualWorkspace =
+                    vscode.workspace.workspaceFolders &&
+                    vscode.workspace.workspaceFolders.every(
+                        (f) => f.uri.scheme !== "file"
+                    );
                 productEndpoints = await customTraverse(
                     data.value,
                     isVirtualWorkspace
@@ -109,7 +116,7 @@ const docterSidebarPreview = async () => {
                 );
                 sidebar_preview_panel.webview.postMessage({
                     value: encodedEndoints,
-                    type: "categorySelect",
+                    type: "RELOAD_SIDEBAR_PREVIEW",
                 });
                 break;
             }
@@ -120,6 +127,12 @@ const docterSidebarPreview = async () => {
 // Building Menu items
 const buildMenuItems = async () => {
     let selectFolder = vscode.workspace.workspaceFolders[0];
+    isVirtualWorkspace =
+        vscode.workspace.workspaceFolders &&
+        vscode.workspace.workspaceFolders.every((f) => f.uri.scheme !== "file");
+    vscode.window.showInformationMessage(
+        "Please wait while menu items are geting updated"
+    );
     let endpoints = await traverse(isVirtualWorkspace);
     let utf8Encode = new TextEncoder();
     let uri = "";
@@ -133,7 +146,7 @@ const buildMenuItems = async () => {
             vscode.Uri.parse(uri),
             utf8Encode.encode(JSON.stringify(endpoints))
         );
-        vscode.window.showInformationMessage("Menu items have been modified!");
+        vscode.window.showInformationMessage("Menu items have been updated!");
     } catch (e) {
         console.log(e);
         vscode.window.showErrorMessage("Please try again!");

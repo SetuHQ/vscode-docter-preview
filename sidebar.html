@@ -20,11 +20,11 @@
             window.addEventListener("message", (event) => {
                 const message = event.data; // The json data that the extension sent
                 switch (message.type) {
-                    case "initial": {
+                    case "SIDEBAR_PREVIEW": {
                         initialLayout(message.value);
                         break;
                     }
-                    case "categorySelect": {
+                    case "RELOAD_SIDEBAR_PREVIEW": {
                         document.getElementById("sidebar-preview").src =
                             "https://staging.docs.setu.co/sidebar-preview?endpoints=" +
                             message.value;
@@ -37,14 +37,6 @@
                 let selectOptionHTML = getOptions(options);
                 document.getElementById("category").innerHTML =
                     selectOptionHTML;
-            }
-
-            function getScore() {
-                var score = document.querySelector(
-                    'input[name="categorySelect"]:checked'
-                ).value;
-
-                vscode.postMessage({ type: "colorSelected", value: color });
             }
 
             function getOptions(options) {
@@ -61,7 +53,10 @@
                 let category = document.getElementById("category").value;
                 console.log(category);
                 // document.getElementById("getValue").innerText = category;
-                vscode.postMessage({ type: "categorySelect", value: category });
+                vscode.postMessage({
+                    type: "CATEGORY_SELECTED",
+                    value: category,
+                });
             }
         </script>
     </head>

@@ -12,17 +12,23 @@
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <script>
             window.addEventListener("message", (event) => {
+                console.log("Message received");
                 const message = event.data; // The json data that the extension sent
-                document.getElementById("mdx-preview").src =
-                    "https://staging.docs.setu.co/preview-query?mdx=" +
-                    message.document;
+                switch (message.type) {
+                    case "MDX_PREVIEW": {
+                        document.getElementById("mdx-preview").src =
+                            "https://staging.docs.setu.co/preview-query?mdx=" +
+                            message.value;
+                        break;
+                    }
+                }
             });
         </script>
     </head>
 
     <body style="margin: 0px; padding: 0px; overflow: hidden">
         <iframe
-            src="https://staging.docs.setu.co/preview-query?mdx=IyMgV2FpdCBmb3IgdGhlIGNvbnRlbnQgdG8gbG9hZA=="
+            src=""
             frameborder="0"
             style="
                 overflow: hidden;

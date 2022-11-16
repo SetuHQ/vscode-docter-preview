@@ -12,30 +12,31 @@ async function endpointHelper(data, mainUri) {
 
         // type 2 is directory; type 1 is file
         if (type === 2) {
-            if (!children.some((el) => el.path === name)) {
-                let markdownwithMeta;
-                try {
-                    let fileUri = vscode.Uri.parse(mainUri + `/${name}.mdx`);
-                    let fileContent = await vscode.workspace.fs.readFile(
-                        fileUri
-                    );
-                    let byteArray = Array.from(new Uint8Array(fileContent));
+            let markdownwithMeta;
+            try {
+                let fileUri = vscode.Uri.parse(`${mainUri}/${name}.mdx`);
+                let fileContent = await vscode.workspace.fs.readFile(fileUri);
+                let byteArray = Array.from(new Uint8Array(fileContent));
 
-                    // Replace emdash with `-`; emdash is an extended ASCII character and needs to replaced
-                    for (let i in byteArray) {
-                        if (byteArray[i] === 226) {
-                            byteArray[i] = 45;
-                        }
+                // Replace emdash with `-`; emdash is an extended ASCII character and needs to replaced
+                for (let i in byteArray) {
+                    if (byteArray[i] === 226) {
+                        byteArray[i] = 45;
                     }
-                    // Filter for 128 characters for Uint8 array of bytes
-                    byteArray = byteArray.filter((byte) => byte <= 127);
-                    const bytesString = String.fromCharCode(...byteArray);
-                    markdownwithMeta = bytesString;
-                } catch (e) {
-                    markdownwithMeta = "";
                 }
+                // Filter for 128 characters for Uint8 array of bytes
+                byteArray = byteArray.filter((byte) => byte <= 127);
+                const bytesString = String.fromCharCode(...byteArray);
+                markdownwithMeta = bytesString;
+            } catch (e) {
+                vscode.window.showErrorMessage(
+                    "Endpoints couldn't be found in directory"
+                );
+                markdownwithMeta = "";
+            }
+            try {
                 const { data: frontMatter, content } = matter(markdownwithMeta);
-                let childrenUri = vscode.Uri.parse(mainUri + `/${name}`);
+                let childrenUri = vscode.Uri.parse(`${mainUri}/${name}`);
                 let childrenRes = await vscode.workspace.fs.readDirectory(
                     childrenUri
                 );
@@ -50,6 +51,11 @@ async function endpointHelper(data, mainUri) {
                         `${mainUri}/${name}`
                     ),
                 });
+            } catch (e) {
+                vscode.window.showErrorMessage(
+                    "Endpoints couldn't be found in directory second try" +
+                        `${mainUri}/${name}`
+                );
             }
         } else {
             if (!children.some((el) => el.path === name)) {
@@ -73,8 +79,12 @@ async function endpointHelper(data, mainUri) {
                     const bytesString = String.fromCharCode(...byteArray);
                     markdownwithMeta = bytesString;
                 } catch (e) {
+                    vscode.window.showErrorMessage(
+                        `Endpoints couldn't be found in file ${mainUri}/${name}.mdx`
+                    );
                     markdownwithMeta = "";
                 }
+
                 const { data: frontMatter, content } = matter(markdownwithMeta);
                 children.push({
                     name: frontMatter.sidebar_title,
