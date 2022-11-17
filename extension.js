@@ -1,7 +1,7 @@
 const vscode = require("vscode");
 const os = require("os");
 import base64url from "base64url";
-import { traverse, getEndpoints, customTraverse } from "./traverse";
+import { traverse, customTraverse } from "./traverse";
 
 const is_web_ext = os.homedir === undefined; // Runs as web extension in browser.
 
@@ -59,11 +59,16 @@ const docterMDXPreview = async () => {
 
 // Sidebar Preview
 const docterSidebarPreview = async () => {
-    isVirtualWorkspace =
-        vscode.workspace.workspaceFolders &&
-        vscode.workspace.workspaceFolders.every((f) => f.uri.scheme !== "file");
+    let active_window = vscode.window;
+    if (!active_window) return;
+    let active_editor = active_window.activeTextEditor;
+    if (!active_editor) return;
+    let active_doc = active_editor.document;
+    if (!active_doc) return;
+    let orig_uri = active_doc.uri;
+    if (!orig_uri) return;
 
-    let endpoints = await getEndpoints(isVirtualWorkspace);
+    let endpoints = JSON.parse(active_doc.getText());
     let options = [];
     for (let endpoint of endpoints["home"]) {
         if (endpoint.visible_in_sidebar) {
@@ -102,14 +107,9 @@ const docterSidebarPreview = async () => {
     sidebar_preview_panel.webview.onDidReceiveMessage(async (data) => {
         switch (data.type) {
             case "CATEGORY_SELECTED": {
-                isVirtualWorkspace =
-                    vscode.workspace.workspaceFolders &&
-                    vscode.workspace.workspaceFolders.every(
-                        (f) => f.uri.scheme !== "file"
-                    );
                 productEndpoints = await customTraverse(
                     data.value,
-                    isVirtualWorkspace
+                    JSON.parse(active_doc.getText())
                 );
                 let encodedEndoints = base64url(
                     JSON.stringify(productEndpoints)
@@ -126,25 +126,29 @@ const docterSidebarPreview = async () => {
 
 // Building Menu items
 const buildMenuItems = async () => {
-    let selectFolder = vscode.workspace.workspaceFolders[0];
-    isVirtualWorkspace =
-        vscode.workspace.workspaceFolders &&
-        vscode.workspace.workspaceFolders.every((f) => f.uri.scheme !== "file");
+    let active_window = vscode.window;
+    if (!active_window) return;
+    let active_editor = active_window.activeTextEditor;
+    if (!active_editor) return;
+    let active_doc = active_editor.document;
+    if (!active_doc) return;
+    let orig_uri = active_doc.uri;
+    if (!orig_uri) return;
+
     vscode.window.showInformationMessage(
-        "Please wait while menu items are geting updated"
+        "Please wait while the menu items are updated"
     );
-    let endpoints = await traverse(isVirtualWorkspace);
+
+    let selectFolder = vscode.workspace.workspaceFolders[0];
+
+    let endpoints = JSON.parse(active_doc.getText());
+    let result = await traverse(endpoints);
     let utf8Encode = new TextEncoder();
-    let uri = "";
-    if (!isVirtualWorkspace) {
-        uri = `${selectFolder.uri.scheme}:/${selectFolder.uri.path}/menuItems.json`;
-    } else {
-        uri = `${selectFolder.uri.scheme}://github${selectFolder.uri.path}/menuItems.json`;
-    }
+    let uri = `${selectFolder.uri.scheme}://${selectFolder.uri.authority}${selectFolder.uri.path}/menuItems.json`;
     try {
         await vscode.workspace.fs.writeFile(
             vscode.Uri.parse(uri),
-            utf8Encode.encode(JSON.stringify(endpoints))
+            utf8Encode.encode(JSON.stringify(result))
         );
         vscode.window.showInformationMessage("Menu items have been updated!");
     } catch (e) {

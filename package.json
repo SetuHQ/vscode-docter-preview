@@ -2,7 +2,7 @@
     "name": "docter-preview",
     "displayName": "Docter Preview",
     "description": "Preview documentaion using Setu's Docter",
-    "version": "0.0.6",
+    "version": "0.0.7",
     "publisher": "SetuDesign",
     "icon": "assets/icon.png",
     "license": "MIT",

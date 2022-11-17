@@ -3,6 +3,7 @@ const matter = require("gray-matter");
 
 // Recursively build sidebar items for documentation
 async function endpointHelper(data, mainUri) {
+    data = data.sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0));
     let children = [];
     for (let item of data) {
         let name = item[0];
@@ -100,20 +101,12 @@ async function endpointHelper(data, mainUri) {
 }
 
 // Traverse through endpoints to build the sidebar JSON
-export async function traverse(isVirtualWorkspace) {
+export async function traverse(endpoints) {
     let selectFolder = vscode.workspace.workspaceFolders[0];
-
-    let endpoints = await getEndpoints(isVirtualWorkspace);
 
     for (let endpoint of endpoints["home"]) {
         for (let child of endpoint.children) {
-            // Change uri if virtual workspace
-            let uri = "";
-            if (!isVirtualWorkspace) {
-                uri = `${selectFolder.uri.scheme}:/${selectFolder.uri.path}/${endpoint.path}/${child.path}`;
-            } else {
-                uri = `${selectFolder.uri.scheme}://github${selectFolder.uri.path}/${endpoint.path}/${child.path}`;
-            }
+            let uri = `${selectFolder.uri.scheme}://${selectFolder.uri.authority}${selectFolder.uri.path}/${endpoint.path}/${child.path}`;
 
             let res = await vscode.workspace.fs.readDirectory(
                 vscode.Uri.parse(uri)
@@ -125,9 +118,8 @@ export async function traverse(isVirtualWorkspace) {
 }
 
 // Build individual sidebar for preview
-export async function customTraverse(path, isVirtualWorkspace) {
+export async function customTraverse(path, endpoints) {
     let selectFolder = vscode.workspace.workspaceFolders[0];
-    let endpoints = await getEndpoints(isVirtualWorkspace);
 
     let bundledEndpoints = { home: [] };
     let [categoryPath, productPath] = path.split("/");
@@ -141,12 +133,7 @@ export async function customTraverse(path, isVirtualWorkspace) {
     );
 
     // Change uri if virtual workspace
-    let uri = "";
-    if (!isVirtualWorkspace) {
-        uri = `${selectFolder.uri.scheme}:/${selectFolder.uri.path}/${categoryPath}/${productPath}`;
-    } else {
-        uri = `${selectFolder.uri.scheme}://github${selectFolder.uri.path}/${categoryPath}/${productPath}`;
-    }
+    let uri = `${selectFolder.uri.scheme}://${selectFolder.uri.authority}${selectFolder.uri.path}/${categoryPath}/${productPath}`;
     let res = await vscode.workspace.fs.readDirectory(vscode.Uri.parse(uri));
     children[0]["children"] = await endpointHelper(res, uri);
     category["children"] = children;
