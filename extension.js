@@ -126,6 +126,31 @@ const docterSidebarPreview = async () => {
 
 // Building Menu items
 const buildMenuItems = async () => {
+    // Notification with progress
+    vscode.window.withProgress(
+        {
+            location: vscode.ProgressLocation.Notification,
+            title: "Please wait while the menu items are updated",
+            cancellable: false,
+        },
+        async () => {
+            let data = await buildMenuItemsLogic();
+
+            if (data) {
+                vscode.window.showInformationMessage(
+                    "Menu items have been updated!"
+                );
+                return;
+            } else {
+                vscode.window.showErrorMessage("Please try again!");
+                return;
+            }
+        }
+    );
+};
+
+// Logic to build menu items
+const buildMenuItemsLogic = async () => {
     let active_window = vscode.window;
     if (!active_window) return;
     let active_editor = active_window.activeTextEditor;
@@ -134,10 +159,6 @@ const buildMenuItems = async () => {
     if (!active_doc) return;
     let orig_uri = active_doc.uri;
     if (!orig_uri) return;
-
-    vscode.window.showInformationMessage(
-        "Please wait while the menu items are updated"
-    );
 
     let selectFolder = vscode.workspace.workspaceFolders[0];
 
@@ -150,10 +171,10 @@ const buildMenuItems = async () => {
             vscode.Uri.parse(uri),
             utf8Encode.encode(JSON.stringify(result))
         );
-        vscode.window.showInformationMessage("Menu items have been updated!");
+        return true;
     } catch (e) {
         console.log(e);
-        vscode.window.showErrorMessage("Please try again!");
+        return false;
     }
 };
 
