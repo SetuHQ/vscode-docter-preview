@@ -106,7 +106,7 @@ export async function traverse(endpoints) {
 
     for (let endpoint of endpoints["home"]) {
         for (let child of endpoint.children) {
-            let uri = `${selectFolder.uri.scheme}://${selectFolder.uri.authority}${selectFolder.uri.path}/${endpoint.path}/${child.path}`;
+            let uri = `${selectFolder.uri.scheme}://${selectFolder.uri.authority}${selectFolder.uri.path}/content/${endpoint.path}/${child.path}`;
 
             let res = await vscode.workspace.fs.readDirectory(
                 vscode.Uri.parse(uri)
@@ -133,7 +133,7 @@ export async function customTraverse(path, endpoints) {
     );
 
     // Change uri if virtual workspace
-    let uri = `${selectFolder.uri.scheme}://${selectFolder.uri.authority}${selectFolder.uri.path}/${categoryPath}/${productPath}`;
+    let uri = `${selectFolder.uri.scheme}://${selectFolder.uri.authority}${selectFolder.uri.path}/content/${categoryPath}/${productPath}`;
     let res = await vscode.workspace.fs.readDirectory(vscode.Uri.parse(uri));
     children[0]["children"] = await endpointHelper(res, uri);
     category["children"] = children;
@@ -151,11 +151,11 @@ export async function getEndpoints(isVirtualWorkspace) {
     // Change uri if virtual workspace
     if (!isVirtualWorkspace) {
         endpointsUri = vscode.Uri.parse(
-            `${selectFolder.uri.scheme}:/${selectFolder.uri.path}/endpoints.json`
+            `${selectFolder.uri.scheme}:/${selectFolder.uri.path}/content/endpoints.json`
         );
     } else {
         endpointsUri = vscode.Uri.parse(
-            `${selectFolder.uri.scheme}://github${selectFolder.uri.path}/endpoints.json`
+            `${selectFolder.uri.scheme}://github${selectFolder.uri.path}/content/endpoints.json`
         );
     }
     let endpoints = await vscode.workspace.fs.readFile(endpointsUri);

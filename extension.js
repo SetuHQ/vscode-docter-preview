@@ -165,7 +165,7 @@ const buildMenuItemsLogic = async () => {
     let endpoints = JSON.parse(active_doc.getText());
     let result = await traverse(endpoints);
     let utf8Encode = new TextEncoder();
-    let uri = `${selectFolder.uri.scheme}://${selectFolder.uri.authority}${selectFolder.uri.path}/menuItems.json`;
+    let uri = `${selectFolder.uri.scheme}://${selectFolder.uri.authority}${selectFolder.uri.path}/content/menuItems.json`;
     try {
         await vscode.workspace.fs.writeFile(
             vscode.Uri.parse(uri),
