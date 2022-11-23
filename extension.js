@@ -50,8 +50,16 @@ const docterMDXPreview = async () => {
     let client_html = client_html_template;
     preview_panel.webview.html = client_html;
     let encodedMDX = base64url(active_doc.getText());
+    let result = [];
+
+    // Max header value when sending as query parameter
+    // TODO: Find a better way to solve this
+    result.push(encodedMDX.slice(0, 15000));
+    if (encodedMDX.length > 15000) {
+        result.push(encodedMDX.slice(-(encodedMDX.length - 15000)));
+    }
     preview_panel.webview.postMessage({
-        value: encodedMDX,
+        value: result,
         type: "MDX_PREVIEW",
     });
     return;
