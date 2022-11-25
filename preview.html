@@ -18,15 +18,7 @@
                     case "MDX_PREVIEW": {
                         document.getElementById("mdx-preview").src =
                             "https://staging.docs.setu.co/preview-query?mdx=" +
-                            message.value[0];
-                        if (message.value.length > 1) {
-                            document.getElementById(
-                                "mdx-preview-second"
-                            ).style.display = "block";
-                            document.getElementById("mdx-preview-second").src =
-                                "https://staging.docs.setu.co/preview-query?mdx=" +
-                                message.value[1];
-                        }
+                            message.value;
                         break;
                     }
                 }
@@ -48,21 +40,6 @@
             height="100%"
             width="100%"
             id="mdx-preview"
-        ></iframe>
-        <iframe
-            src=""
-            frameborder="0"
-            style="
-                overflow: hidden;
-                overflow-x: hidden;
-                overflow-y: hidden;
-                height: 100%;
-                width: 100%;
-                display: none;
-            "
-            height="100%"
-            width="100%"
-            id="mdx-preview-second"
         ></iframe>
     </body>
 </html>

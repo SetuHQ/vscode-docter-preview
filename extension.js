@@ -31,6 +31,24 @@ const docterMDXPreview = async () => {
     let orig_uri = active_doc.uri;
     if (!orig_uri) return;
 
+    let encodedMDX = base64url(active_doc.getText());
+    // Error for Max header value when sending as query parameter
+    // TODO: Find a better way to solve this
+    // Currently, showing a message to users regarding this and taking them to an editor page
+    if (encodedMDX.length > 15000) {
+        const selection = await vscode.window.showWarningMessage(
+            "This MDX file contains more characters than the accepted limit. \nPlease visit our preview page where you can copy this content and preview accordingly.",
+            "Go to Preview page"
+        );
+
+        if (selection !== undefined) {
+            vscode.env.openExternal(
+                vscode.Uri.parse("https://docs.setu.co/content-preview")
+            );
+        }
+        return;
+    }
+
     preview_panel = vscode.window.createWebviewPanel(
         "docter-preview",
         `${active_doc.uri.path.split("/").slice(-1)} - MDX Preview`,
@@ -49,17 +67,9 @@ const docterMDXPreview = async () => {
     }
     let client_html = client_html_template;
     preview_panel.webview.html = client_html;
-    let encodedMDX = base64url(active_doc.getText());
-    let result = [];
 
-    // Max header value when sending as query parameter
-    // TODO: Find a better way to solve this
-    result.push(encodedMDX.slice(0, 15000));
-    if (encodedMDX.length > 15000) {
-        result.push(encodedMDX.slice(-(encodedMDX.length - 15000)));
-    }
     preview_panel.webview.postMessage({
-        value: result,
+        value: encodedMDX,
         type: "MDX_PREVIEW",
     });
     return;
