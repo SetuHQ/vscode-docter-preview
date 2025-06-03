@@ -1,0 +1,23 @@
+id = "docter-preview"
+name = "Docter Preview"
+description = "Preview documentation using Setu's Docter with CLI commands"
+version = "0.1.0"
+schema_version = 1
+authors = ["SetuHQ <sreejitde7@gmail.com>"]
+repository = "https://github.com/SetuHQ/vscode-docter-preview"
+
+[language_servers.docter-preview]
+name = "Docter Preview"
+language = "markdown"
+
+[[commands]]
+command = "docter-preview"
+args = ["mdx-preview"]
+
+[[commands]]
+command = "docter-preview"
+args = ["sidebar-preview"]
+
+[[commands]]
+command = "docter-preview"
+args = ["build-menu-items"]

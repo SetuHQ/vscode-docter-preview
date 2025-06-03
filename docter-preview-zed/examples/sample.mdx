@@ -1,0 +1,76 @@
+---
+sidebar_title: "Getting Started"
+page_title: "Getting Started with Payments"
+visible_in_sidebar: true
+order: 1
+---
+
+# Getting Started with Payments
+
+Welcome to the Setu Payments documentation. This guide will help you integrate payment solutions into your application.
+
+## Overview
+
+Setu provides a comprehensive suite of payment APIs that enable you to:
+
+- Accept payments via UPI, cards, and net banking
+- Process refunds and settlements
+- Handle webhooks and notifications
+- Manage payment flows
+
+## Quick Start
+
+### 1. Get API Keys
+
+First, you'll need to obtain your API keys from the Setu dashboard:
+
+```bash
+curl -X GET "https://api.setu.co/auth/keys" \
+  -H "Authorization: Bearer YOUR_TOKEN"
+```
+
+### 2. Make Your First Payment
+
+Here's a simple example to create a payment link:
+
+```javascript
+const payment = await setu.payments.create({
+  amount: 10000, // Amount in paisa (₹100.00)
+  currency: "INR",
+  customer: {
+    name: "John Doe",
+    email: "john@example.com",
+    phone: "+919876543210"
+  },
+  purpose: "Test Payment"
+});
+
+console.log(payment.paymentLink);
+```
+
+### 3. Handle Webhooks
+
+Set up webhook endpoints to receive payment status updates:
+
+```javascript
+app.post('/webhook', (req, res) => {
+  const { status, paymentId, amount } = req.body;
+  
+  if (status === 'SUCCESS') {
+    // Payment successful - update your database
+    console.log(`Payment ${paymentId} successful for amount ${amount}`);
+  }
+  
+  res.status(200).send('OK');
+});
+```
+
+## Next Steps
+
+- Explore [UPI payments](./upi.mdx)
+- Learn about [Card payments](./cards.mdx)
+- Check out [Net Banking](./netbanking.mdx) integration
+
+## Support
+
+Need help? Contact our support team at support@setu.co or check our [FAQ section](./faq.mdx).

@@ -1,0 +1,1 @@
+/Users/sreejit/setu/vscode-docter-preview/docter-preview-zed/target/release/docter-preview: /Users/sreejit/setu/vscode-docter-preview/docter-preview-zed/src/lib.rs /Users/sreejit/setu/vscode-docter-preview/docter-preview-zed/src/main.rs

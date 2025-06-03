@@ -1,0 +1,1 @@
+/Users/sreejit/setu/vscode-docter-preview/docter-preview-zed/target/wasm32-wasip1/release/docter-preview.wasm: /Users/sreejit/setu/vscode-docter-preview/docter-preview-zed/src/lib.rs /Users/sreejit/setu/vscode-docter-preview/docter-preview-zed/src/main.rs

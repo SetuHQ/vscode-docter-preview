@@ -1,0 +1,34 @@
+[package]
+name = "docter-preview"
+version = "0.1.0"
+edition = "2021"
+description = "Preview documentation using Setu's Docter"
+license = "MIT"
+repository = "https://github.com/SetuHQ/vscode-docter-preview"
+
+[lib]
+name = "docter_preview"
+crate-type = ["cdylib", "rlib"]
+
+[target.wasm32-wasip1.dependencies]
+
+[[bin]]
+name = "docter-preview"
+path = "src/main.rs"
+
+[dependencies]
+zed_extension_api = "0.0.6"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+base64 = "0.22"
+anyhow = "1.0"
+regex = "1.0"
+url = "2.0"
+
+[package.metadata.zed]
+id = "docter-preview"
+name = "Docter Preview"
+description = "Preview documentation using Setu's Docter with CLI commands"
+version = "0.1.0"
+authors = ["SetuHQ <aditya.g@setu.co>"]
+repository = "https://github.com/SetuHQ/vscode-docter-preview"

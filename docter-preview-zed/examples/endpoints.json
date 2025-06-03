@@ -1,0 +1,58 @@
+{
+  "home": [
+    {
+      "name": "Payments",
+      "path": "payments",
+      "visible_in_sidebar": true,
+      "order": 1,
+      "children": [
+        {
+          "name": "UPI",
+          "path": "upi",
+          "order": 1
+        },
+        {
+          "name": "Cards",
+          "path": "cards",
+          "order": 2
+        },
+        {
+          "name": "Net Banking",
+          "path": "netbanking",
+          "order": 3
+        }
+      ]
+    },
+    {
+      "name": "Data",
+      "path": "data",
+      "visible_in_sidebar": true,
+      "order": 2,
+      "children": [
+        {
+          "name": "Account Aggregator",
+          "path": "account-aggregator",
+          "order": 1
+        },
+        {
+          "name": "PAN Verification",
+          "path": "pan-verification",
+          "order": 2
+        }
+      ]
+    },
+    {
+      "name": "Identity",
+      "path": "identity",
+      "visible_in_sidebar": false,
+      "order": 3,
+      "children": [
+        {
+          "name": "KYC",
+          "path": "kyc",
+          "order": 1
+        }
+      ]
+    }
+  ]
+}
